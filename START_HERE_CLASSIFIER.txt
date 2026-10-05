@@ -1,0 +1,211 @@
+CAP-CSDP + WSCN 分类器 v4
+===========================
+
+最简单运行：
+
+    RUN_CLASSIFIER
+
+如果希望从 CAP-CSDP/WSCN 论文图一直跑到分类器：
+
+    RUN_ALL_WITH_CLASSIFIER
+
+
+一、当前做的分类任务
+-------------------
+六分类退磁严重度：
+
+D0
+D10
+D30
+D50
+D70
+D100
+
+
+二、特征链
+---------
+Br/Bt/Bz raw signals
+    ↓
+Amplitude-preserving CAP-CSDP
+    ↓
+Channel-wise WSCN
+    ↓
+WSCN feature vector
+    ↓
+standardization
+    ↓
+PCA
+    ↓
+multiclass classifier
+
+
+三、分类特征
+-----------
+每个 Br/Bt/Bz 通道提取：
+
+CAP-CSDP：
+- mean
+- standard deviation
+- RMS
+- maximum
+- active-pixel fraction
+
+WSCN 0/1/2 阶：
+- total-order path energy
+- mean path energy
+- path-energy standard deviation
+- maximum path energy
+- normalized path-energy entropy
+- top-10% path energy fraction
+
+另外加入：
+- Br/Bt
+- Bz/Bt
+- Br/Bz
+
+三个通道在各阶的能量比例特征。
+
+
+四、分类器
+---------
+程序自动检测 MATLAB 是否有 Statistics and Machine Learning Toolbox。
+
+可用时比较：
+
+ECOC-SVM (RBF)
+ECOC-SVM (linear)
+LDA
+kNN
+Nearest centroid
+
+如果 Statistics Toolbox 不存在：
+仍然可以使用 nearest-centroid fallback，
+所以程序不会因为缺少分类工具箱完全不能运行。
+
+
+五、最重要的科学限制
+-------------------
+当前包里的数据只有：
+
+1 个 D0 独立 CSV
+1 个 D10 独立 CSV
+1 个 D30 独立 CSV
+1 个 D50 独立 CSV
+1 个 D70 独立 CSV
+1 个 D100 独立 CSV
+
+所以现在还不能做真正意义上的“独立测试集分类精度”。
+
+为了先把分类代码、特征链、PCA、SVM、混淆矩阵全部建立起来，
+程序会从每一个原始 waveform 生成很轻微的训练增强：
+
+- circular phase shift
+- 约 1% gain jitter
+- 38–46 dB Gaussian noise
+
+当前交叉验证模式会明确显示：
+
+    PROTOTYPE_AUGMENTATION_CV
+
+这个准确率可以用来：
+- 检查分类代码是否正常
+- 检查 WSCN 特征是否有分离趋势
+- 选择后续分类器方向
+
+但是：
+不要把它直接写成论文最终分类准确率。
+
+
+六、什么时候可以正式写论文精度
+-----------------------------
+建议每个退磁等级至少增加多个“独立源文件”，例如：
+
+D0_run01.csv
+D0_run02.csv
+D0_run03.csv
+...
+
+D10_run01.csv
+D10_run02.csv
+D10_run03.csv
+...
+
+一直到 D100。
+
+最好这些独立样本来自：
+- 不同负载
+- 不同转速
+- 不同噪声
+- 不同仿真初始相位/采样窗口
+- 或重复实验
+
+只要每个 severity 至少有 2 个独立 CSV，
+本程序就自动切换为：
+
+    GROUPED_BY_SOURCE_FILE
+
+这时：
+同一个原始 CSV 产生的所有 augmentation 永远留在同一 fold，
+不会同时进入训练集和测试集。
+
+这才是更接近论文应使用的验证方式。
+
+
+七、输出
+-------
+results/classifier/
+
+其中：
+
+VALIDATION_STATUS.txt
+    第一时间看这个文件。
+    它会告诉你当前结果是 PROTOTYPE 还是 GROUPED validation。
+
+tables/
+    WSCN_Classifier_Features.csv
+    Classifier_Model_Comparison.csv
+    Classifier_SelectedModel_CV_Predictions.csv
+    Classifier_SelectedModel_ConfusionMatrix.csv
+    Classifier_Feature_Ranking.csv
+
+figures/paper/
+    Classifier_ConfusionMatrix.*
+    Classifier_PCA_FeatureSpace.*
+    Classifier_ModelComparison.*
+    Classifier_TopWSCNFeatures.*
+
+figures/ppt/
+    同样一套大字号图。
+
+model/
+    WSCN_Classifier_FinalModel.mat
+
+
+八、预测一个新的 CSV
+-------------------
+先运行：
+
+    RUN_CLASSIFIER
+
+训练结束后：
+
+    PREDICT_NEW_CSV('new_sample.csv')
+
+或者直接：
+
+    PREDICT_NEW_CSV
+
+然后选择文件。
+
+
+九、首次运行时间
+---------------
+分类器需要为增强后的样本重新计算 CAP-CSDP + WSCN，
+所以第一次会比较慢。
+
+完成后会缓存：
+
+results/classifier/cache/WSCN_Classifier_FeatureCache.mat
+
+以后数据和参数没有变化时，
+RUN_CLASSIFIER 会直接读取缓存，速度会快很多。

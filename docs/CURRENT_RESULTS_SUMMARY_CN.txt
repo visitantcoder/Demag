@@ -1,0 +1,35 @@
+当前结果简表
+============
+
+CAP-CSDP/WSCN：
+- CAP-CSDP 从 D0 到 D100 的花瓣形态、颜色贡献和局部强度出现渐进变化。
+- WSCN 的 Bt 分支对退磁最敏感，总阶次能量随严重度明显增加。
+- Br 在中高退磁区间也表现出显著结构变化。
+- Bz 整体敏感度弱于 Br/Bt，但可提供互补信息。
+
+当前分类器结果（PROTOTYPE_AUGMENTATION_CV）：
+Nearest centroid:
+  Accuracy 93.8%, Macro-F1 93.7%
+
+LDA:
+  Accuracy 100.0%, Macro-F1 100.0%
+
+kNN:
+  Accuracy 93.8%, Macro-F1 93.9%
+
+ECOC-SVM (linear):
+  Accuracy 100.0%, Macro-F1 100.0%
+
+ECOC-SVM (RBF):
+  Accuracy 97.9%, Macro-F1 97.9%
+
+自动选择：
+ECOC-SVM (linear)
+
+混淆矩阵：
+当前每类 n=8，六类全部正确。
+
+重要：
+这里的 n=8 不是 8 个独立 Maxwell 仿真。
+当前每类只有 1 个独立 CSV，其他为轻微 augmentation。
+所以这些数字只能用于方法可行性/特征可分性展示。

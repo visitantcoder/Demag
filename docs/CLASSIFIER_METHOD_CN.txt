@@ -1,0 +1,61 @@
+Classifier methodology note
+===========================
+
+Recommended paper method chain:
+
+Three-axis side leakage flux
+    -> amplitude-preserving CAP-CSDP
+    -> channel-wise WSCN
+    -> compact scattering-energy descriptors
+    -> z-score standardization
+    -> PCA
+    -> ECOC-SVM
+
+Classification target:
+    six demagnetization severities
+    D0/D10/D30/D50/D70/D100
+
+Why use compact WSCN statistics instead of flattening every coefficient:
+1. lower dimensionality;
+2. more interpretable;
+3. less overfitting under small-sample conditions;
+4. directly connects with the order-energy analysis already used in the paper.
+
+Feature definitions for each channel c and order m:
+
+Path energy:
+    e_{c,m,p} = mean(|S_{c,m,p}|^2)
+
+Total order energy:
+    E_{c,m} = sum_p e_{c,m,p}
+
+Mean path energy:
+    Ebar_{c,m} = mean_p e_{c,m,p}
+
+Path-energy dispersion:
+    std_p(e_{c,m,p})
+
+Maximum path energy:
+    max_p e_{c,m,p}
+
+Normalized path-energy entropy:
+    H_{c,m}
+      = -sum_p q_p log(q_p) / log(N_m)
+    q_p = e_p / sum_q e_q
+
+Top-10% path fraction:
+    T_{c,m}
+      = energy contained in the highest-energy 10% paths
+        / total order energy
+
+No D0-relative feature is supplied to the classifier because an unknown
+sample should be classifiable independently, without knowing its label.
+
+Current bundled validation limitation:
+Only one independent source waveform is available for each severity.
+Therefore the current package labels its result as PROTOTYPE_AUGMENTATION_CV.
+Synthetic augmentation does not replace independent simulation/experiment
+replicates.
+
+Once multiple Dxx*.csv source files are supplied per class, the program
+automatically uses source-file-grouped cross-validation.

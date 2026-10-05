@@ -1,0 +1,49 @@
+CAP-CSDP + WSCN v3 — 白底论文图版
+=================================
+
+直接运行：
+    RUN_ME
+
+这版重点修正：
+1. CAP-CSDP 论文/PPT 图不再用黑色背景。
+2. 数值 tensor 的背景仍然是 0；只改变绘图显示，不改数据。
+3. CAP-CSDP 现在直接输出到 paper/ 和 ppt/，作为正式结果图。
+4. RGB 主图 D0~D100 + Br/Bt/Bz 使用统一显示尺度。
+5. 另外输出 Br/Bt/Bz 三通道分解图。
+6. WSCN 额外输出一份白底打印版。
+7. 保留旧 MATLAB 的 subplot 兼容模式。
+
+运行：
+    RUN_ME
+
+论文结果：
+    results/publication/paper/
+
+优先看：
+
+    CAP_CSDP_RGB_AllStates_WHITE_BG
+        论文主 CAP-CSDP 图
+        2x3: D0 D10 D30 D50 D70 D100
+        R=Br, G=Bt, B=Bz
+        白色=零响应
+        所有状态/通道严格共用一个显示尺度
+
+    CAP_CSDP_Channels_AllStates_WHITE_BG
+        三通道详细图
+        行：Br / Bt / Bz
+        列：D0 ... D100
+        每一行在所有 D 状态中使用共同尺度
+        不要跨行比较绝对亮度
+
+    WSCN_Process_RGB_AllStates_WHITE_BG
+        WSCN 的白底打印版
+
+    WSCN_TotalOrderEnergy
+    WSCN_RelativeToD0
+    WSCN_MeanEnergyPerPath
+    WSCN_TotalOrderEnergyRatio
+
+特别说明：
+CAP-CSDP 白底不是把原始 tensor 反相。
+WSCN 的输入仍然是原来的 zero-background CAP-CSDP numerical tensor。
+白底只在 export figure 时使用。

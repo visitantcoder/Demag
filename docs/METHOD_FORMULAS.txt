@@ -1,0 +1,39 @@
+Method formulas used by this package
+===================================
+
+CAP-CSDP:
+u_c(k) = clip((B_c(k)+A_c)/(2A_c),0,1)
+r_c(k) = u_c(k)
+theta_m,+/- = m*psi +/- delta*u_c(k+l)
+w_c(k) = clip(|B_c(k-l)|/A_c,0,1)
+
+with:
+l = 10
+delta = 50 deg
+psi = 60 deg
+
+Channel-wise WSCN:
+I_CAP(x,y) = [E_r(x,y),E_t(x,y),E_z(x,y)]
+E_c -> WSCN_c, c in {r,t,z}
+
+U1[I_c] = |I_c * psi_lambda1|
+S1[I_c] = U1[I_c] * phi_J
+
+U2[I_c] = ||I_c*psi_lambda1|*psi_lambda2|
+S2[I_c] = U2[I_c] * phi_J
+
+S0[I_c] = I_c * phi_J
+
+All-path visualization:
+A_m(x,y)=sqrt((1/N_m) sum_p |C_m,p(x,y)|^2)
+
+Strict stage-common display scale:
+M_s = robust percentile over all states, all channels, and all pixels
+      within the same WSCN stage.
+
+Raw-path quantitative energy:
+e_c,m,p = mean(|S_c,m,p|^2)
+E_c,m = sum_p e_c,m,p
+Ebar_c,m = E_c,m/N_m
+G_c,m(D)=E_c,m(D)/E_c,m(D0)
+rho_c,m(D)=E_c,m(D)/sum_q E_c,q(D)

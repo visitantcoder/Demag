@@ -1,0 +1,30 @@
+CAP-CSDP + Channel-wise WSCN + Classifier
+FINAL Version: v5, 2026-08-30
+
+Final CAP-CSDP:
+  l = 10
+  delta = 50 deg
+  psi0 = 60 deg
+  fixed channel-wise amplitude references
+  amplitude/intensity preserving
+  white-background publication rendering
+
+WSCN:
+  channel-wise Br/Bt/Bz
+  ImageSize = 256 x 256
+  InvarianceScale = 128
+  NumRotations = [6 6]
+  0/1/2 order analysis
+  all-path RMS pooling for visualization
+  raw-path energy for numerical metrics
+
+Classifier:
+  compact CAP-CSDP + WSCN features
+  z-score
+  PCA
+  classifier comparison
+  selected best model automatically
+
+Current validation:
+  PROTOTYPE_AUGMENTATION_CV
+  NOT final independent generalization accuracy.
